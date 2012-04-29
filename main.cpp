@@ -44,6 +44,7 @@ int main(int argc, char** argv)
     BlockFs* fs = new BlockFs();
     fs->initWithMemory(data, sz);
 
+    /* // TEST
     BlockfsFile* file = fs->open("url.amf", "");
     int ch = file->getc();
     while (ch != -1) {
@@ -51,6 +52,7 @@ int main(int argc, char** argv)
       ch = file->getc();
     }
     delete file;
+    */
 
     delete fs;
     delete[] data;

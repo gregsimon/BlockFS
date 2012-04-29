@@ -17,7 +17,6 @@
 
 
 static bool processFile(const char* inFileName, const char*, FILE* outFile);
-bool read_file(const char* full_path, unsigned char** outdata, unsigned long* sz);
 
 static int write_u32(FILE* f, unsigned long v) {
   fputc(v >> 24, f);
@@ -60,8 +59,6 @@ int blockfs_pack_dir(const char* in_folder, const char* output_name)
     toc_size += 4; // offset
     toc_size += 4; // filesize
     toc_size += strlen(entry->d_name) + 1;
-
-    //processFile(path, entry->d_name, out_file);
   }
   closedir(d);
 
@@ -77,6 +74,8 @@ int blockfs_pack_dir(const char* in_folder, const char* output_name)
 
   // write the TOC.
   unsigned long running_file_offset = toc_size;
+
+  // TODO : really could just do this with one pass
 
   write_u32(out_file, 0xff00ffdd); // cookie
   write_u32(out_file, file_list.size()); // # of files

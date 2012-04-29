@@ -89,8 +89,6 @@ bool BlockFs::initWithMemory(const unsigned char* data, unsigned long sz)
   ptr += 4;
 
   unsigned long numFiles = read_u32(ptr);
-  //printf("%ld files\n",numFiles);
-
   for (unsigned long i=0; i<numFiles; ++i)
   {
     FileEntry entry;
