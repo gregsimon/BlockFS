@@ -47,7 +47,10 @@ public:
   int GetC();
   int UnGetC(int c);
   int Read(unsigned char* buffer, int len);
-  int Seek(int offset);
+  int SeekFromStart(int offset);
+  int SeekFromCurrent(int offset);
+  int Peek();
+  long int Tell();
 
 private:
 	const unsigned char* base_;

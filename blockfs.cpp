@@ -12,7 +12,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 
-#include "Blockfs.h"
+#include "blockfs.h"
 
 static unsigned long read_u32(const unsigned char*& ptr) {
   unsigned long v = ((*ptr++) << 24);
@@ -34,9 +34,14 @@ BlockfsFile::BlockfsFile(const unsigned char* base, unsigned long sz)
 int BlockfsFile::GetC()
 {
   if (ptr_ >= end_)
-    return -1;
+    return EOF;
 
   return *ptr_++;
+}
+
+int BlockfsFile::Peek()
+{
+  return *ptr_;
 }
 
 int BlockfsFile::UnGetC(int c)
@@ -58,10 +63,20 @@ int BlockfsFile::Read(unsigned char* buffer, int len)
   return (int)len;
 }
 
-int BlockfsFile::Seek(int offset)
+int BlockfsFile::SeekFromStart(int offset)
 {
   ptr_ = base_ + offset;
   return 0;
+}
+
+int BlockfsFile::SeekFromCurrent(int offset)
+{
+  ptr_ = ptr_ + offset;
+  return 0;
+}
+
+long int BlockfsFile::Tell() {
+  return (long int)(ptr_ - base_);
 }
 
 // --------------------------------------------------------------
@@ -123,6 +138,10 @@ bool BlockFs::fileExists(const char* filename)
 
 BlockfsFile* BlockFs::open(const char* filename, const char* flags)
 {
+  // trim the '/' off the front of the filename.
+  while (*filename && *filename == '/')
+    filename++;
+
   for (std::list<FileEntry>::const_iterator it=files_.begin(); it != files_.end(); ++it) {
     if (it->name == std::string(filename)) {
       BlockfsFile* file = new BlockfsFile(data_ + it->offset, it->size);
